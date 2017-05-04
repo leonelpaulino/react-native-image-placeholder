@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, ActivityIndicator } from 'react-native';
+import { Image, ActivityIndicator, View } from 'react-native';
 
 class ImageLoad extends React.Component {
   constructor(props) {
@@ -23,35 +23,46 @@ class ImageLoad extends React.Component {
   }
 
   renderIndicator() {
-    if (this.props.isIndicator) {
+    if (this.props.isIndicator && !this.shouldRenderImage()) {
       return (
         <ActivityIndicator
           size={this.props.loadingStyle ? this.props.loadingStyle.size : 'small'}
           color={this.props.loadingStyle ? this.props.loadingStyle.color : 'gray'}
+          style={[this.props.style, styles.image]}
         />
       );
     }
     return null;
   }
 
+  shouldRenderImage() {
+    return this.state.isLoaded && !this.state.isError;
+  }
+
+  renderPlaceHolder() {
+    if (this.shouldRenderImage()) {
+      return null;
+    }
+    return (
+      <Image
+        style={[this.props.style, styles.image]}
+        source={this.props.placeholderSource ? this.props.placeholderSource : require('./Images/empty-image.png')}
+      />
+    );
+  }
+
   render() {
     return(
-      <Image
-        onLoadEnd={this.onLoadEnd.bind(this)}
-        onError={this.onError.bind(this)}
-        style={[this.props.style, { alignItems: 'center' }]}
-        source={this.props.source}
-      >
-        {
-          this.state.isLoaded && !this.state.isError ? null :
-          <Image
-            style={[styles.imagePlaceholderStyles, this.props.placeholderStyle]}
-            source={this.props.placeholderSource ? this.props.placeholderSource : require('./Images/empty-image.png')}
-          >
-            {this.props.children ? this.props.children : this.getIndication()}
-          </Image>
-        }
-      </Image>
+      <View style={this.props.containerStyle}>
+      {this.renderPlaceHolder()}
+        <Image
+          onLoadEnd={this.onLoadEnd.bind(this)}
+          onError={this.onError.bind(this)}
+          style={[this.props.style, styles.image, {opacity: this.state.isLoaded ? 1 : 0}]}
+          source={this.props.source}
+        />
+        {this.renderIndicator()}
+      </View>
     );
   }
 }
@@ -66,6 +77,11 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'gray'
+  },
+  image: {
+    position: 'absolute',
+    top: 0,
+    left: 0
   }
 }
 

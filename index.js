@@ -28,7 +28,7 @@ class ImageLoad extends React.Component {
         <ActivityIndicator
           size={this.props.loadingStyle ? this.props.loadingStyle.size : 'small'}
           color={this.props.loadingStyle ? this.props.loadingStyle.color : 'gray'}
-        />;
+        />
       );
     }
     return null;

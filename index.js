@@ -22,6 +22,18 @@ class ImageLoad extends React.Component {
     });
   }
 
+  renderIndicator() {
+    if (this.props.isIndicator) {
+      return (
+        <ActivityIndicator
+          size={this.props.loadingStyle ? this.props.loadingStyle.size : 'small'}
+          color={this.props.loadingStyle ? this.props.loadingStyle.color : 'gray'}
+        />;
+      );
+    }
+    return null;
+  }
+
   render() {
     return(
       <Image
@@ -36,19 +48,17 @@ class ImageLoad extends React.Component {
             style={[styles.imagePlaceholderStyles, this.props.placeholderStyle]}
             source={this.props.placeholderSource ? this.props.placeholderSource : require('./Images/empty-image.png')}
           >
-            {
-              this.props.children ? this.props.children :
-              <ActivityIndicator
-                size={this.props.loadingStyle ? this.props.loadingStyle.size : 'small'}
-                color={this.props.loadingStyle ? this.props.loadingStyle.color : 'gray'}
-              />
-            }
+            {this.props.children ? this.props.children : this.getIndication()}
           </Image>
         }
       </Image>
     );
   }
 }
+
+ImageLoad.defaultProps = {
+  isIndicator: true
+};
 
 const styles = {
   imagePlaceholderStyles: {
